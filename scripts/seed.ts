@@ -15,7 +15,9 @@ interface RawAccount {
   description: string;
   is_verified: string;
   restricted: string;
+  _id: string;
   _status: string;
+  id_alt: string;
 }
 
 interface RawFollower {
@@ -89,6 +91,7 @@ async function seed() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const dataDir = path.join(__dirname, "../data");
 
+  // only for task. Not best practice.
   console.log("Starting database reset...");
   await db.execute(sql`TRUNCATE TABLE posts, followers, accounts CASCADE;`);
   await db.execute(
@@ -120,7 +123,9 @@ async function seed() {
         description: row.description,
         isVerified: row.is_verified,
         restricted: row.restricted,
+        _id: row._id,
         _status: row._status,
+        idAlt: row.id_alt,
       });
       if (accBuffer.length >= BATCH_SIZE) {
         await db.insert(stgAccounts).values(accBuffer);
@@ -172,28 +177,27 @@ async function seed() {
 
   console.log("Running data transformation...");
   await db.execute(sql`
-    INSERT INTO accounts (id, username, full_name, description, is_verified, restricted, _id, _status, id_alt)
+    INSERT INTO accounts (id, username, full_name, description, is_verified, restricted, _status)
     SELECT id, NULLIF(username, 'NULL'), NULLIF(full_name, 'NULL'), NULLIF(description, 'NULL'), 
-           (LOWER(is_verified) = 'true'), (LOWER(restricted) = 'true'), NULLIF(_id, 'NULL'), 
-           NULLIF(_status, 'NULL'), NULLIF(id_alt, 'NULL')
+           (LOWER(is_verified) = 'true'), (LOWER(restricted) = 'true'), NULLIF(_status, 'NULL')
     FROM stg_accounts ON CONFLICT (id) DO NOTHING;
   `);
 
   await db.execute(sql`
     INSERT INTO followers (profile_id, followers_count)
-    SELECT a.id, COALESCE(CAST(NULLIF(NULLIF(f.followers_count, ''), 'NULL') AS INTEGER), 0)
+    SELECT sa.id, COALESCE(CAST(NULLIF(NULLIF(f.followers_count, ''), 'NULL') AS INTEGER), 0)
     FROM stg_followers f
-    JOIN accounts a ON a._id = f._id
+    JOIN stg_accounts sa ON sa._id = f._id
     ON CONFLICT DO NOTHING;
   `);
 
   await db.execute(sql`
     INSERT INTO posts (id, profile_id, text_original, comments_count, created_time)
-    SELECT p.id, a.id, NULLIF(p.text_original, 'NULL'), 
+    SELECT p.id, sa.id, NULLIF(p.text_original, 'NULL'), 
            COALESCE(CAST(NULLIF(NULLIF(p.comments_count, ''), 'NULL') AS INTEGER), 0),
            CAST(NULLIF(NULLIF(p.created_time, ''), 'NULL') AS TIMESTAMPTZ)
     FROM stg_posts p
-    JOIN accounts a ON (p.profile_id = a.id OR p.profile_id = a.id_alt)
+    JOIN stg_accounts sa ON (p.profile_id = sa.id OR p.profile_id = sa.id_alt)
     ON CONFLICT DO NOTHING;
   `);
 
