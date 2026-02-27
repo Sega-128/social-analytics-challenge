@@ -9,7 +9,7 @@ Everything runs automatically, including environment setup, DB configuration, da
 ### Run it:
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.dev.yml up --build
 ```
 
 Wait: The process automatically creates a `.env` file from the example, runs migrations, and executes integration tests. Once they pass, the server will start at http://localhost:3000.

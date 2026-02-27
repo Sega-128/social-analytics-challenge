@@ -21,8 +21,8 @@ pnpm run db:push\n\
 pnpm run pretest\n\
 pnpm run db:seed\n\
 pnpm run test --run\n\
-pnpm run dev" > entrypoint.sh && chmod +x entrypoint.sh
+pnpm run dev" > /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["./entrypoint.sh"]
+CMD ["zsh", "/entrypoint.sh"]
