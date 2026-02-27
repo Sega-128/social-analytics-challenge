@@ -36,6 +36,7 @@ Update `DATABASE_URL` in `.env` to your local Postgres host.
 Run the setup scripts:
 
 ```bash
+pnpm run db:push # Create table
 pnpm run pretest # Creates test DB & pushes schema
 pnpm run db:seed # Imports CSV data
 ```

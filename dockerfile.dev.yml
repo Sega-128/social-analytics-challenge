@@ -17,6 +17,7 @@ COPY . .
 
 RUN printf "#!/bin/zsh\n\
 [ ! -f .env ] && cp .env.example .env\n\
+pnpm run db:push\n\
 pnpm run pretest\n\
 pnpm run db:seed\n\
 pnpm run test --run\n\
