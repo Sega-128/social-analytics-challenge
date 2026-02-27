@@ -11,6 +11,7 @@ import {
 
 import { leaderboardRoutes } from "./routes/leaderboard.routes.ts";
 import { bestTimeRoutes } from "./routes/best-time.routes.ts";
+import { consistencyRoutes } from "./routes/consistency.routes.ts";
 
 export function buildApp(opts = {}) {
   const app = Fastify(opts).withTypeProvider<ZodTypeProvider>();
@@ -35,6 +36,7 @@ export function buildApp(opts = {}) {
 
   app.register(leaderboardRoutes);
   app.register(bestTimeRoutes);
+  app.register(consistencyRoutes);
 
   return app;
 }
