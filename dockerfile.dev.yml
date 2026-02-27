@@ -10,6 +10,18 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /usr/src/app
 
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
 COPY . .
 
+RUN printf "#!/bin/zsh\n\
+[ ! -f .env ] && cp .env.example .env\n\
+pnpm run pretest\n\
+pnpm run db:seed\n\
+pnpm run test --run\n\
+pnpm run dev" > entrypoint.sh && chmod +x entrypoint.sh
+
 EXPOSE 3000
+
+CMD ["./entrypoint.sh"]
