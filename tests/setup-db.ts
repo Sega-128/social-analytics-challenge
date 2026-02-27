@@ -37,7 +37,7 @@ const setup = async () => {
       stdio: "inherit",
     });
     console.log("Database schema synchronized.");
-  } catch (error) {
+  } catch {
     console.error("Error during schema push.");
     process.exit(1);
   }

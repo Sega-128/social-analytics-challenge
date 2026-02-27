@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { accounts, posts, followers } from "../db/schema/index.ts";
 import { BestTimeParams, BestTimeQuery } from "../schemas/best-time.schema.ts";
 
 type BestTimeFilters = BestTimeParams & BestTimeQuery;

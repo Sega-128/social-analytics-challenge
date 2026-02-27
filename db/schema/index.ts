@@ -1,3 +1,3 @@
-export * from './accounts';
-export * from './posts';
-export * from './followers';
+export * from "./accounts";
+export * from "./posts";
+export * from "./followers";

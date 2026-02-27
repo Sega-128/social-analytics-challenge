@@ -29,14 +29,14 @@ export const BestTimeController = {
         meta: { profileId, filters },
         data,
       });
-    } catch (error: any) {
-      request.log.error(error);
+    } catch (error) {
+      const err = error as Error & { statusCode?: number };
 
-      const statusCode = error.statusCode || 500;
+      request.log.error(err);
 
-      return reply.code(statusCode).send({
+      return reply.code(err.statusCode || 500).send({
         success: false,
-        error: error.message || "Internal Server Error",
+        error: err.message || "Internal Server Error",
       });
     }
   },
