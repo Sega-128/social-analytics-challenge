@@ -10,6 +10,7 @@ import {
 } from "fastify-type-provider-zod";
 
 import { leaderboardRoutes } from "./routes/leaderboard.routes.ts";
+import { bestTimeRoutes } from "./routes/best-time.routes.ts";
 
 export function buildApp(opts = {}) {
   const app = Fastify(opts).withTypeProvider<ZodTypeProvider>();
@@ -33,6 +34,7 @@ export function buildApp(opts = {}) {
   });
 
   app.register(leaderboardRoutes);
+  app.register(bestTimeRoutes);
 
   return app;
 }
