@@ -9,6 +9,8 @@ import {
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
 
+import { leaderboardRoutes } from "./routes/leaderboard.routes.ts";
+
 export function buildApp(opts = {}) {
   const app = Fastify(opts).withTypeProvider<ZodTypeProvider>();
 
@@ -29,6 +31,8 @@ export function buildApp(opts = {}) {
   app.register(fastifySwaggerUi, {
     routePrefix: "/docs",
   });
+
+  app.register(leaderboardRoutes);
 
   return app;
 }
