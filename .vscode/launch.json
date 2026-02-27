@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Seed Script",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/seed.ts",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["tsx", "watch"],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "sourceMaps": true
+    }
+  ]
+}
