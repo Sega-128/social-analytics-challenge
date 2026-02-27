@@ -2,7 +2,11 @@ import postgres from "postgres";
 import { execSync } from "child_process";
 
 const setup = async () => {
-  const sql = postgres("postgresql://postgres:postgres@postgres:5432/postgres");
+  const adminUrl = process.env.DATABASE_URL as string;
+  const testUrl = process.env.TEST_DATABASE_URL as string;
+  const testDbName = process.env.TEST_DB_NAME as string;
+
+  const sql = postgres(adminUrl);
 
   try {
     console.log("1. Recreating the test database...");
@@ -10,16 +14,17 @@ const setup = async () => {
     await sql`
       SELECT pg_terminate_backend(pg_stat_activity.pid)
       FROM pg_stat_activity
-      WHERE pg_stat_activity.datname = 'analytics_test'
+      WHERE pg_stat_activity.datname = ${testDbName}
         AND pid <> pg_backend_pid();
     `;
 
-    await sql`DROP DATABASE IF EXISTS analytics_test;`;
-    await sql`CREATE DATABASE analytics_test;`;
+    await sql.unsafe(`DROP DATABASE IF EXISTS ${testDbName};`);
+    await sql.unsafe(`CREATE DATABASE ${testDbName};`);
 
-    console.log("Test database 'analytics_test' successfully created.");
-  } catch (e: any) {
-    console.error("Database setup error:", e.message);
+    console.log(`Test database '${testDbName}' successfully created.`);
+  } catch (e) {
+    const err = e as Error;
+    console.error("Database setup error:", err.message);
     process.exit(1);
   } finally {
     await sql.end();
@@ -27,12 +32,10 @@ const setup = async () => {
 
   console.log("2. Applying Drizzle schema...");
   try {
-    // Using --force to bypass interactive prompts in the console
     execSync("npx drizzle-kit push --force", {
       env: {
         ...process.env,
-        DATABASE_URL:
-          "postgresql://postgres:postgres@postgres:5432/analytics_test",
+        DATABASE_URL: testUrl,
       },
       stdio: "inherit",
     });

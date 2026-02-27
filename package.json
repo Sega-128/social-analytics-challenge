@@ -4,12 +4,12 @@
   "type": "module",
   "description": "",
   "main": "server.ts",
-  "scripts": {
-    "dev": "tsx watch server.ts",
-    "pretest": "tsx tests/setup-db.ts",
-    "test": "DATABASE_URL=postgres://postgres:postgres@postgres:5432/analytics_test vitest",
+ "scripts": {
+    "dev": "tsx --env-file=.env watch server.ts",
+    "pretest": "tsx --env-file=.env tests/setup-db.ts",
+    "test": "node --env-file=.env.test node_modules/vitest/vitest.mjs",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx scripts/seed.ts",
+    "db:seed": "tsx --env-file=.env scripts/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate:up": "drizzle-kit migrate:up",
     "db:migrate:down": "drizzle-kit migrate:down",

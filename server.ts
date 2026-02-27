@@ -48,9 +48,12 @@ if (isRunDirectly) {
     const app = buildApp({ logger: true });
 
     try {
-      await app.listen({ port: 3000, host: "0.0.0.0" });
-      console.log("http://localhost:3000");
-      console.log("http://localhost:3000/docs");
+      const port = Number(process.env.PORT) || 3000;
+      const host = process.env.HOST || "0.0.0.0";
+
+      await app.listen({ port, host });
+      console.log(`http://${host}:${port}`);
+      console.log(`http://${host}:${port}/docs`);
     } catch (err) {
       app.log.error(err);
       process.exit(1);
